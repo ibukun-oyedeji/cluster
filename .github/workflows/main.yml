@@ -31,7 +31,10 @@ jobs:
       - name: Configure kubectl for Huawei CCE
         run: |
           echo "${{ secrets.KUBE_CONFIG_DATA }}" > kubeconfig.yaml
+          kubectl config view --kubeconfig=kubeconfig.yaml
+          kubectl config get-contexts --kubeconfig=kubeconfig.yaml
           kubectl config use-context external --kubeconfig=kubeconfig.yaml
+          kubectl config current-context --kubeconfig=kubeconfig.yaml
 
   deploy:
     runs-on: ubuntu-latest
