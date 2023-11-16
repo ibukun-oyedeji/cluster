@@ -16,12 +16,12 @@ jobs:
       - name: Build Docker image
         run: docker buildx build -t hello .
 
-      #- name: Log in to Huawei Cloud SWR
-      #  uses: huaweicloud/swr-login@v2.1.0
-      #  with:
-      #    access-key-id: ${{ secrets.ACCESSKEY }}
-      #    access-key-secret: ${{ secrets.SECRETACCESSKEY }}
-      #    region: ${{ env.REGION_ID }}
+      - name: Log in to Huawei Cloud SWR
+        uses: huaweicloud/swr-login@v2.1.0
+        with:
+          access-key-id: ${{ secrets.ACCESSKEY }}
+          access-key-secret: ${{ secrets.SECRETACCESSKEY }}
+          region: af-south-1
 
       - name: Build, Tag, and Push Image to Huawei Cloud SWR
         id: push-image
