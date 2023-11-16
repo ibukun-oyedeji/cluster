@@ -23,18 +23,10 @@ jobs:
           access-key-secret: ${{ secrets.SECRETACCESSKEY }}
           region: af-south-1
 
-      - name: Build, Tag, and Push Image to Huawei Cloud SWR
-        id: push-image
-        env:
-          SWR_REGISTRY: swr.${{ env.REGION_ID }}.myhuaweicloud.com
-          SWR_ORGANIZATION: ${{ env.SWR_ORGANIZATION }}
-          IMAGE_TAG: ${{ github.sha }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+      - name: Build and push Docker image
         run: |
-          docker login -u af-south-1@304IO3JLLQP502QS8QVC -p fffabef4c79ed28cc69b074f6a0c7164341860e5f22cc3a651d883696e901238 swr.af-south-1.myhuaweicloud.com
-          docker build -t $SWR_REGISTRY/$SWR_ORGANIZATION/$IMAGE_NAME:v1 .
-          docker push $SWR_REGISTRY/$SWR_ORGANIZATION/$IMAGE_NAME:v1
-          echo "::set-output name=image::$SWR_REGISTRY/$SWR_ORGANIZATION/$IMAGE_NAME:v1"
+          docker build -t swr.af-south-1.myhuaweicloud.com/credpal/corporate-loans:${{ github.sha }} .
+          docker push swr.af-south-1.myhuaweicloud.com/credpal/corporate-loans:${{ github.sha }}
 
       - name: Configure kubectl
         uses: azure/k8s-set-context@v1
