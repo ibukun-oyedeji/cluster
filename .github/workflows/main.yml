@@ -3,7 +3,7 @@ name: CI/CD to Huawei SWR and CCE
 on:
   push:
     branches:
-      - master  # Trigger CI/CD when code is pushed to the 'master' branch
+      - master
 
 jobs:
   build:
@@ -29,13 +29,13 @@ jobs:
           docker push swr.af-south-1.myhuaweicloud.com/credpal/corporate-loans:${{ github.sha }}
 
       - name: Configure kubectl for Huawei CCE
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig.yaml
-          cat kubeconfig.yaml # Caution: Only for debugging, remove if sensitive data is present
-          kubectl config view --kubeconfig=kubeconfig.yaml
-          kubectl config get-contexts --kubeconfig=kubeconfig.yaml
-          kubectl config use-context external --kubeconfig=kubeconfig.yaml
-          kubectl config current-context --kubeconfig=kubeconfig.yaml
+          echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
+          kubectl config view
+          kubectl config current-context
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,17 +46,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Configure kubectl for Huawei CCE
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig.yaml
-          cat kubeconfig.yaml # Caution: Only for debugging, remove if sensitive data is present
-          kubectl config view --kubeconfig=kubeconfig.yaml
-          kubectl config get-contexts --kubeconfig=kubeconfig.yaml
-          kubectl config use-context external --kubeconfig=kubeconfig.yaml
-          kubectl config current-context --kubeconfig=kubeconfig.yaml
+          echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
+          kubectl config view
+          kubectl config current-context
 
       - name: Debugging
         run: |
-          kubectl config current-context
           kubectl cluster-info
           kubectl get nodes
 
